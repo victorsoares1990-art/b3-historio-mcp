@@ -1,6 +1,11 @@
 from flask import Flask, jsonify
+import requests
+import zipfile
+import io
+from datetime import datetime
 
 app = Flask(__name__)
+
 
 @app.route("/")
 def home():
@@ -10,11 +15,13 @@ def home():
         "mensagem": "Servidor funcionando"
     })
 
+
 @app.route("/health")
 def health():
     return jsonify({
         "status": "healthy"
     })
+
 
 @app.route("/historico/<ticker>")
 def historico(ticker):
@@ -23,6 +30,7 @@ def historico(ticker):
         "status": "ok",
         "mensagem": "Endpoint histórico funcionando"
     })
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
