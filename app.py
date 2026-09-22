@@ -1,8 +1,5 @@
 from flask import Flask, jsonify
 import requests
-import zipfile
-import io
-from datetime import datetime, timedelta
 
 app = Flask(__name__)
 
@@ -23,34 +20,26 @@ def health():
     })
 
 
-@app.route("/historico/<ticker>")
-def historico(ticker):
+@app.route("/teste-b3")
+def teste_b3():
 
-    ticker = ticker.upper()
+    url = "https://bvmf.bmfbovespa.com.br/InstDados/SerHist/COTAHIST_M092026.ZIP"
 
-    ano_atual = datetime.now().year
+    try:
+        resposta = requests.head(url, timeout=15)
 
-    url = f"https://bvmf.bmfbovespa.com.br/InstDados/SerHist/COTAHIST_A{ano_atual}.ZIP"
+        return jsonify({
+            "status": "ok",
+            "codigo_http": resposta.status_code,
+            "tamanho": resposta.headers.get("Content-Length")
+        })
 
-    resposta = requests.get(url, timeout=60)
+    except Exception as erro:
 
-    if resposta.status_code != 200:
         return jsonify({
             "status": "erro",
-            "mensagem": "Não foi possível baixar o arquivo histórico da B3",
-            "codigo_http": resposta.status_code
+            "mensagem": str(erro)
         }), 500
-
-    arquivo_zip = zipfile.ZipFile(io.BytesIO(resposta.content))
-
-    arquivos = arquivo_zip.namelist()
-
-    return jsonify({
-        "status": "ok",
-        "ticker": ticker,
-        "ano": ano_atual,
-        "arquivo_b3": arquivos
-    })
 
 
 if __name__ == "__main__":
