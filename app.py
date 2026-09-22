@@ -1,6 +1,6 @@
 from flask import Flask, jsonify
 
-app = Flask(__name__)
+app = Flask(_name_)
 
 @app.route("/")
 def home():
@@ -16,5 +16,13 @@ def health():
         "status": "healthy"
     })
 
-if __name__ == "__main__":
+@app.route("/historico/<ticker>")
+def historico(ticker):
+    return jsonify({
+        "ticker": ticker.upper(),
+        "status": "ok",
+        "mensagem": "Endpoint histórico funcionando"
+    })
+
+if _name_ == "_main_":
     app.run(host="0.0.0.0", port=10000)
